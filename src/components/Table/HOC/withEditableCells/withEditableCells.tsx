@@ -7,16 +7,6 @@ import CellEditable from './CellEditable';
 
 const editableComponents = {body: {cell: CellEditable}};
 
-// replace to id if exist
-const values2Id = <TRecord,>(record: TRecord): TRecord =>
-  Object.entries(record).reduce(
-    (acc, [key, value]: [string, Record<string, unknown>]) => ({
-      ...acc,
-      [key]: value?.id || value,
-    }),
-    record,
-  );
-
 // replace id to title from dictionary if exist
 const ids2Values = <TRecord extends Record<string, unknown>, D extends TDictionary<TRecord>>(dictionary: D) => (
   values: TRecord,
@@ -42,10 +32,13 @@ function withEditableCells<TRecord extends Record<string, unknown>>(
 
     const [form] = Form.useForm();
     const [editingKey, setEditingKey] = useState<string | number>('');
-    const inDictionary = useMemo(() => dictionary && ids2Values<TRecord, TDictionary<TRecord>>(dictionary), [
+    const inDictionary = useMemo(() => dictionary && ids2Values<Partial<TRecord>, TDictionary<TRecord>>(dictionary), [
       dictionary,
     ]);
-    const id2ValAtDictionary = useCallback(values => (inDictionary ? inDictionary(values) : values), [inDictionary]);
+    const id2ValAtDictionary = useCallback(
+      (values: Partial<TRecord>) => (inDictionary ? inDictionary(values) : values),
+      [inDictionary],
+    );
 
     const isEditing = useCallback(record => record?.index === editingKey, [editingKey]);
     const mergeColumns = useMemo(
@@ -54,10 +47,10 @@ function withEditableCells<TRecord extends Record<string, unknown>>(
     );
 
     const setEditState = useCallback(
-      (record?: TRecord) => {
+      (record?: Partial<TRecord>) => {
         if (!record) return setEditingKey('');
         const {index, ...restRecord} = record;
-        if (restRecord) form.setFieldsValue(values2Id<TRecord>(record));
+        if (restRecord) form.setFieldsValue(record);
         if (typeof index !== 'string' && typeof index !== 'number') {
           return null;
         }
@@ -67,9 +60,9 @@ function withEditableCells<TRecord extends Record<string, unknown>>(
     );
 
     const handleSave = useCallback(
-      async (record: TRecord) => {
+      async (record: Partial<TRecord>) => {
         const newData = [...dataSource];
-        const formData = (await form.validateFields()) as TRecord;
+        const formData = (await form.validateFields()) as Partial<TRecord>;
         const idx = newData.findIndex(({index}) => record.index === index);
         const item = newData[idx];
         setEditingKey('');
@@ -90,8 +83,6 @@ function withEditableCells<TRecord extends Record<string, unknown>>(
           width: '100px',
           render: (record: TRecord) => {
             const isEdit = isEditing(record);
-            const {memberId} = record as {memberId?: string | null};
-            if (memberId) return null;
             return isEdit ? (
               <>
                 <Popconfirm
@@ -117,7 +108,7 @@ function withEditableCells<TRecord extends Record<string, unknown>>(
     const tableParts = useMemo(() => mergeTableParts<TRecord>(components, editableComponents), [components]);
 
     return (
-      <Form form={form} component={false}>
+      <Form<Partial<TRecord>> form={form} component={false}>
         <TableComponent {...restProps} columns={mergedColumns} components={tableParts} />
       </Form>
     );

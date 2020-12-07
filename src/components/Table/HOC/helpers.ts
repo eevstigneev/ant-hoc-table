@@ -9,7 +9,7 @@ export type TOnSort<TRecord> = (record: TRecord, insertBefore: TRecord | null, l
 export type TOnSearch<TRecord> = (records: TRecord[], value: string) => void;
 export type TOnLink<TRecord> = (record: TRecord) => void;
 export type TOnDelete<TRecord> = (record: TRecord, list: TRecord[]) => void;
-export type TOnSave<TRecord> = (record: TRecord, list: TRecord[]) => void;
+export type TOnSave<TRecord> = (rowFormData: Partial<TRecord>, list: TRecord[]) => void;
 export type TOnAddRow<TRecord> = (list: Partial<TRecord>[]) => void;
 
 export type TWithTable<TRecord> = {
