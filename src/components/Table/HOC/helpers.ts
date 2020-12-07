@@ -4,18 +4,6 @@ import {TableProps} from 'antd/lib/table';
 import {TableComponents} from 'rc-table/lib/interface';
 import {TDictionary} from './withEditableCells/helpers';
 
-export type MaybeTitleOrFIO = {
-  title?: string;
-  lastName?: string;
-  firstName?: string;
-  middleName?: string;
-};
-
-export type MaybeIdOrIndex = {
-  id?: string;
-  index?: number | string;
-};
-
 export type TWithTable<TRecord> = {
   onReSyncKey?: (record: TRecord) => void;
   onSort?: (record: TRecord, insertBefore: TRecord | null, list: TRecord[]) => void;

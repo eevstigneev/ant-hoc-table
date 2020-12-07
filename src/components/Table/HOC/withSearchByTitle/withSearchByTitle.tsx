@@ -1,11 +1,11 @@
 import React, {FC, useCallback, useMemo} from 'react';
 import {SearchProps} from 'antd/lib/input';
-import {getDisplayName, MaybeTitleOrFIO, TWithTable} from '../helpers';
+import {getDisplayName, TWithTable} from '../helpers';
 import {TitleWith, TSearch} from '../../TableParts';
 
 const searchNormalizer = (value: string): string => value.trim().toLowerCase().replace(/\s/g, '');
-const composeRecordToText = (record: MaybeTitleOrFIO): string => {
-  if (record?.title) return record?.title;
+const composeRecordToText = <TRecord extends Record<string, unknown>>(record: TRecord): string => {
+  if (record?.title && typeof record.title === 'string') return record.title;
   if (record?.lastName || record?.firstName || record?.middleName) {
     const {firstName = '', lastName = '', middleName = ''} = record;
     return [lastName, firstName, middleName].filter(Boolean).join('');
@@ -15,7 +15,9 @@ const composeRecordToText = (record: MaybeTitleOrFIO): string => {
 
 type HandleSearch = Required<SearchProps>['onSearch'];
 
-function withSearchByTitle<TRecord>(TableComponent: FC<TWithTable<TRecord>>): FC<TWithTable<TRecord>> {
+function withSearchByTitle<TRecord extends Record<string, unknown>>(
+  TableComponent: FC<TWithTable<TRecord>>,
+): FC<TWithTable<TRecord>> {
   function TableWithSearchByTitle(props: TWithTable<TRecord>) {
     const {dataSource = []} = props;
     const {title = '', onSearch, searchPlaceholder: placeholder, ...restProps} = props;
@@ -23,8 +25,8 @@ function withSearchByTitle<TRecord>(TableComponent: FC<TWithTable<TRecord>>): FC
     const handleSearch = useCallback<HandleSearch>(
       value => {
         const searchText = searchNormalizer(value);
-        const found = dataSource.filter((record: MaybeTitleOrFIO) => {
-          const recordText = composeRecordToText(record);
+        const found = dataSource.filter(record => {
+          const recordText = composeRecordToText<TRecord>(record);
           return searchNormalizer(recordText).includes(searchText);
         });
         if (onSearch) onSearch(found, searchText);

@@ -1,7 +1,7 @@
 import React, {FC, useCallback, useMemo, useState} from 'react';
 import {Button, Form, Popconfirm} from 'antd';
 import {CloseSquareOutlined, EditOutlined, QuestionCircleOutlined, SaveOutlined} from '@ant-design/icons/lib';
-import {getDisplayName, MaybeIdOrIndex, TWithTable, mergeTableParts} from '../helpers';
+import {getDisplayName, TWithTable, mergeTableParts} from '../helpers';
 import {columnsWithOnCell, TDictionary, TDictionaryItem} from './helpers';
 import CellEditable from './CellEditable';
 
@@ -10,31 +10,30 @@ const editableComponents = {body: {cell: CellEditable}};
 // replace to id if exist
 const values2Id = <TRecord,>(record: TRecord): TRecord =>
   Object.entries(record).reduce(
-    (acc, [key, value]: [string, MaybeIdOrIndex]) => ({
+    (acc, [key, value]: [string, Record<string, unknown>]) => ({
       ...acc,
       [key]: value?.id || value,
     }),
     record,
   );
 
-// replace to title if exist
-const ids2Values = <TRecord extends MaybeIdOrIndex, D extends TDictionary<TRecord>>(dictionary: D) => (
+// replace id to title from dictionary if exist
+const ids2Values = <TRecord extends Record<string, unknown>, D extends TDictionary<TRecord>>(dictionary: D) => (
   values: TRecord,
 ): TRecord => {
   if (!dictionary) return values;
   return Object.entries(values).reduce((acc, [key, value]) => {
-    if (key in dictionary && dictionary[key]) {
-      const valueById = dictionary[key].filter((item: TDictionaryItem) => item.id === value).pop();
-      if (valueById && 'title' in valueById) {
-        return {...acc, [key]: valueById.title};
-      }
+    const dictionaryFieldValues = key in dictionary && Array.isArray(dictionary[key]) ? dictionary[key] : null;
+    if (!dictionaryFieldValues) {
+      // has not dictionary for cell, skip;
       return {...acc, [key]: value};
     }
-    return {...acc, [key]: value};
+    const valueById = (dictionary[key] || []).filter((item: TDictionaryItem) => item?.id === value).pop();
+    return {...acc, [key]: valueById?.title || value};
   }, values);
 };
 
-function withEditableCells<TRecord extends MaybeIdOrIndex = MaybeIdOrIndex>(
+function withEditableCells<TRecord extends Record<string, unknown>>(
   TableComponent: FC<TWithTable<TRecord>>,
 ): FC<TWithTable<TRecord>> {
   function TableEditable(props: TWithTable<TRecord>) {
@@ -59,6 +58,9 @@ function withEditableCells<TRecord extends MaybeIdOrIndex = MaybeIdOrIndex>(
         if (!record) return setEditingKey('');
         const {index, ...restRecord} = record;
         if (restRecord) form.setFieldsValue(values2Id<TRecord>(record));
+        if (typeof index !== 'string' && typeof index !== 'number') {
+          return null;
+        }
         return index || index === 0 ? setEditingKey(index) : null;
       },
       [setEditingKey, form],

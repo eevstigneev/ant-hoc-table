@@ -3,15 +3,15 @@ export const SCREEN_MD_MIN = 992;
 export const SCREEN_LG_MIN = 1200;
 
 export const GRID_GUTTER_WIDTH = 30;
-export const GRID_INNER_PADDING = 20;
-export const INDENT_SM_PX = `${GRID_GUTTER_WIDTH / 2}px`;
-export const INDENT_MD_PX = `${GRID_INNER_PADDING}px`;
-export const INDENT_LG_PX = `${GRID_GUTTER_WIDTH}px`;
+// export const GRID_INNER_PADDING = 20;
+// export const INDENT_SM_PX = `${GRID_GUTTER_WIDTH / 2}px`;
+// export const INDENT_MD_PX = `${GRID_INNER_PADDING}px`;
+// export const INDENT_LG_PX = `${GRID_GUTTER_WIDTH}px`;
 
 // So media queries don't overlap when required, provide a maximum
-export const SCREEN_XS_MAX = SCREEN_SM_MIN - 1;
-export const SCREEN_SM_MAX = SCREEN_MD_MIN - 1;
-export const SCREEN_MD_MAX = SCREEN_LG_MIN - 1;
+// export const SCREEN_XS_MAX = SCREEN_SM_MIN - 1;
+// export const SCREEN_SM_MAX = SCREEN_MD_MIN - 1;
+// export const SCREEN_MD_MAX = SCREEN_LG_MIN - 1;
 
 export const LAYOUT_SM = 720 + GRID_GUTTER_WIDTH;
 export const LAYOUT_MD = 940 + GRID_GUTTER_WIDTH;

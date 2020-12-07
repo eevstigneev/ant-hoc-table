@@ -1,9 +1,11 @@
 import React, {FC, useCallback, useMemo} from 'react';
 import {ButtonProps} from 'antd/lib/button';
-import {getDisplayName, MaybeIdOrIndex, TWithTable, uniq} from '../helpers';
+import {getDisplayName, TWithTable, uniq} from '../helpers';
 import {TAddRow, TitleWith} from '../../TableParts';
 
-function withAddableRows<TRecord>(TableComponent: FC<TWithTable<TRecord>>): FC<TWithTable<TRecord>> {
+function withAddableRows<TRecord extends Record<string, unknown>>(
+  TableComponent: FC<TWithTable<TRecord>>,
+): FC<TWithTable<TRecord>> {
   function TableAddable(props: TWithTable<TRecord>) {
     const {dataSource = []} = props;
     const {initialValues, onAddRow, title, ...restProps} = props;
@@ -13,7 +15,7 @@ function withAddableRows<TRecord>(TableComponent: FC<TWithTable<TRecord>>): FC<T
     }
 
     const handleAddRow = useCallback(() => {
-      const firstElement = (dataSource.length ? dataSource[0] : null) as MaybeIdOrIndex | null;
+      const firstElement = dataSource.length ? dataSource[0] : null;
       const alreadyHasNewRow = firstElement && !firstElement?.id;
       if (alreadyHasNewRow) return;
       const newData = [{...initialValues, index: uniq()}, ...dataSource];

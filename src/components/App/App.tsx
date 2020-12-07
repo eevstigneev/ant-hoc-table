@@ -8,6 +8,7 @@ const columns = [
     dataIndex: 'title',
     editable: true, // make field editable
     fieldType: 'string', // support types 'string' | 'select'
+    className: 'drag-visible',
   },
   {
     title: 'Age',

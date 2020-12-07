@@ -1,7 +1,7 @@
 import {ColumnGroupType, ColumnType} from 'antd/lib/table/interface';
 import {HTMLAttributes} from 'react';
 
-export type TDictionaryItem = {id: string; title: string};
+export type TDictionaryItem = {id: string | number; title: string};
 export type TDictionary<TRecord> = Partial<Record<keyof TRecord, TDictionaryItem[]>>;
 export type TisEditing<TRecord> = (record: TRecord) => boolean;
 

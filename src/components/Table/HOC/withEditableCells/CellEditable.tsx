@@ -3,7 +3,6 @@ import {Form, Input, Select} from 'antd';
 import styled from '@emotion/styled';
 import {TCell} from '../../TableParts';
 import {TCellAllProps, TFieldProps} from './helpers';
-import {MaybeIdOrIndex, MaybeTitleOrFIO} from '../helpers';
 
 const FormItem = styled(Form.Item)`
   margin: 0;
@@ -12,13 +11,13 @@ const FormItem = styled(Form.Item)`
   }
 `;
 
-const FieldSelect = <TRecord,>(props: TFieldProps<TRecord>) => {
+const FieldSelect = <TRecord extends Record<string, unknown>>(props: TFieldProps<TRecord>) => {
   const {record, enums = [], title: fieldLabel, dataIndex} = props;
   const options = useMemo(() => {
-    const {id, title} = (record || {}) as MaybeIdOrIndex & MaybeTitleOrFIO;
-    if (id && title) {
+    if (record?.id && record?.title) {
+      const {id, title} = record;
       const hasSelectedValue = enums.filter(({id: enumId}) => id === enumId).shift();
-      if (!hasSelectedValue) {
+      if (!hasSelectedValue && (typeof id === 'string' || typeof id === 'number') && typeof title === 'string') {
         enums.push({id, title});
       }
     }
@@ -32,7 +31,7 @@ const FieldSelect = <TRecord,>(props: TFieldProps<TRecord>) => {
   );
 };
 
-const FieldString = <TRecord,>(props: TFieldProps<TRecord>) => {
+const FieldString = <TRecord extends Record<string, unknown>>(props: TFieldProps<TRecord>) => {
   const {title, dataIndex} = props;
   return (
     <FormItem label={title} name={dataIndex} rules={[{required: true}]}>
@@ -41,7 +40,7 @@ const FieldString = <TRecord,>(props: TFieldProps<TRecord>) => {
   );
 };
 
-const Field = <TRecord,>(props: TFieldProps<TRecord>) => {
+const Field = <TRecord extends Record<string, unknown>>(props: TFieldProps<TRecord>) => {
   const {fieldType, enums} = props;
   switch (fieldType) {
     case 'string':
@@ -53,7 +52,9 @@ const Field = <TRecord,>(props: TFieldProps<TRecord>) => {
   }
 };
 
-const CellEditable = <TRecord,>(props: TCellAllProps<TRecord>): ReactElement<TCellAllProps<TRecord>> => {
+const CellEditable = <TRecord extends Record<string, unknown>>(
+  props: TCellAllProps<TRecord>,
+): ReactElement<TCellAllProps<TRecord>> => {
   const {editing, dataIndex, title, enums, fieldType, record, index, children, ...restProps} = props;
   const fieldProps = {title, dataIndex, enums, fieldType, record};
   return (
