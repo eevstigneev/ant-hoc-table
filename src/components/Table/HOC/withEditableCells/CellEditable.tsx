@@ -1,8 +1,9 @@
 import React, {ReactElement, useMemo} from 'react';
-import {Form, Input, Select} from 'antd';
+import {Form, Input, InputNumber, Select} from 'antd';
 import styled from '@emotion/styled';
 import {TCell} from '../../TableParts';
 import {TCellAllProps, TFieldProps} from './helpers';
+import {EFieldTypesSupported} from '../constants';
 
 const FormItem = styled(Form.Item)`
   margin: 0;
@@ -12,17 +13,18 @@ const FormItem = styled(Form.Item)`
 `;
 
 const FieldSelect = <TRecord extends Record<string, unknown>>(props: TFieldProps<TRecord>) => {
-  const {record, enums = [], title: fieldLabel, dataIndex} = props;
+  const {record = {}, enums = [], title: fieldLabel, dataIndex} = props;
   const options = useMemo(() => {
-    if (record?.id && record?.title) {
-      const {id, title} = record;
+    const key = typeof dataIndex === 'string' || typeof dataIndex === 'number' ? dataIndex : null;
+    if (key && key in record && record[key]?.id && record[key]?.title) {
+      const {id, title} = record[key];
       const hasSelectedValue = enums.filter(({id: enumId}) => id === enumId).shift();
-      if (!hasSelectedValue && (typeof id === 'string' || typeof id === 'number') && typeof title === 'string') {
+      if (!hasSelectedValue && typeof title === 'string' && (typeof id === 'string' || typeof id === 'number')) {
         enums.push({id, title});
       }
     }
     return !enums ? [] : enums.map(({id: value, title: label}) => ({label, value}));
-  }, [enums, record]);
+  }, [enums, record, dataIndex]);
 
   return (
     <FormItem label={fieldLabel} name={dataIndex} rules={[{required: true}]}>
@@ -40,12 +42,23 @@ const FieldString = <TRecord extends Record<string, unknown>>(props: TFieldProps
   );
 };
 
+const FieldNumber = <TRecord extends Record<string, unknown>>(props: TFieldProps<TRecord>) => {
+  const {title, dataIndex} = props;
+  return (
+    <FormItem label={title} name={dataIndex} rules={[{required: true}]}>
+      <InputNumber />
+    </FormItem>
+  );
+};
+
 const Field = <TRecord extends Record<string, unknown>>(props: TFieldProps<TRecord>) => {
   const {fieldType, enums} = props;
   switch (fieldType) {
-    case 'string':
+    case EFieldTypesSupported.string:
       return <FieldString<TRecord> {...props} />;
-    case 'select':
+    case EFieldTypesSupported.number:
+      return <FieldNumber<TRecord> {...props} />;
+    case EFieldTypesSupported.select:
       return enums ? <FieldSelect<TRecord> {...props} /> : null;
     default:
       return null;

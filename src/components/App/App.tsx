@@ -1,28 +1,8 @@
-import React, {FC, useCallback, useState} from 'react';
+import React, {FC, useCallback, useMemo, useState} from 'react';
 import {withTable} from '../Table';
 import {uniq} from '../Table/HOC/helpers';
-
-const columns = [
-  {
-    title: 'Name',
-    dataIndex: 'title',
-    editable: true, // make field editable
-    fieldType: 'string', // support types 'string' | 'select'
-    className: 'drag-visible',
-  },
-  {
-    title: 'Age',
-    dataIndex: 'age',
-    editable: true, // make field editable
-    fieldType: 'string', // support types 'string' | 'select'
-  },
-  {
-    title: 'Address',
-    dataIndex: 'address',
-    editable: true, // make field editable
-    fieldType: 'string', // support types 'string' | 'select'
-  },
-];
+import {EFieldTypesSupported} from '../Table/HOC/constants';
+import {TColumns} from '../Table/HOC/withEditableCells/helpers';
 
 const data = [
   {
@@ -30,6 +10,7 @@ const data = [
     id: 'cf5b4cc5-485f-47d4-9997-e5e5e37bfc16', // required
     title: 'John Brown',
     age: 32,
+    sex: 'male',
     address: 'New York No. 1 Lake Park',
   },
   {
@@ -37,6 +18,7 @@ const data = [
     id: 'd5ec4e95-12d4-4573-a2cc-d9ab10f0c966', // required
     title: 'Jim Green',
     age: 42,
+    sex: 'male',
     address: 'London No. 1 Lake Park',
   },
   {
@@ -44,11 +26,40 @@ const data = [
     id: '5fa8812d-646d-4bca-bc5a-fcbd173c7685', // required
     title: 'Joe Black',
     age: 32,
+    sex: 'male',
     address: 'Sidney No. 1 Lake Park',
   },
 ];
 
 type TRecord = typeof data[0];
+
+const columns: TColumns<TRecord> = [
+  {
+    title: 'Name',
+    dataIndex: 'title',
+    editable: true, // make field editable
+    fieldType: EFieldTypesSupported.string,
+    className: 'drag-visible',
+  },
+  {
+    title: 'Age',
+    dataIndex: 'age',
+    editable: true, // make field editable
+    fieldType: EFieldTypesSupported.number,
+  },
+  {
+    title: 'Sex',
+    dataIndex: 'sex',
+    editable: true, // make field editable
+    fieldType: EFieldTypesSupported.select,
+  },
+  {
+    title: 'Address',
+    dataIndex: 'address',
+    editable: true, // make field editable
+    fieldType: EFieldTypesSupported.string,
+  },
+];
 
 const Table = withTable<TRecord>({
   withAddableRows: true,
@@ -60,16 +71,28 @@ const Table = withTable<TRecord>({
 
 const App: FC = () => {
   const [list, setList] = useState<TRecord[]>(data);
+  // dictionary for select
+  const dictionary = useMemo(() => {
+    return {
+      sex: [
+        {id: 2, title: 'female'},
+        {id: 1, title: 'male'},
+      ],
+    };
+  }, []);
 
   const handleAddRow = useCallback(records => setList(records), [setList]);
   const handleDeleteRow = useCallback((_record, records) => setList(records), [setList]);
   const handleSaveRowData = useCallback(
     (record: TRecord, records: TRecord[]) => {
       if (record?.id) return setList(records);
-      const newList = [...list].filter(({id}) => !!id);
-      return setList([{...record, index: uniq(), id: uniq()}, ...newList]);
+      const newList = records.map(item => {
+        // mock request, data should be received with id
+        return item?.id ? item : {...item, id: uniq()};
+      });
+      return setList(newList);
     },
-    [list, setList],
+    [setList],
   );
 
   const handleDraggableSort = useCallback(
@@ -89,6 +112,7 @@ const App: FC = () => {
       title={() => 'HOC table'}
       rowKey="index"
       dataSource={list}
+      dictionary={dictionary}
       columns={columns}
       initialValues={{title: '', address: '', age: 0}}
       onAddRow={handleAddRow}

@@ -1,5 +1,6 @@
 import {ColumnGroupType, ColumnType} from 'antd/lib/table/interface';
 import {HTMLAttributes} from 'react';
+import {EFieldTypesSupported} from '../constants';
 
 export type TDictionaryItem = {id: string | number; title: string};
 export type TDictionary<TRecord> = Partial<Record<keyof TRecord, TDictionaryItem[]>>;
@@ -16,7 +17,7 @@ export type TOnCell<TRecord> = (data: TRecord, index?: number) => TOnCellReturnP
 
 export type TColumn<TRecord> = Omit<ColumnType<TRecord>, 'onCell'> & {
   index?: string | number;
-  fieldType?: 'string' | 'select';
+  fieldType?: EFieldTypesSupported;
   editable?: boolean;
   onCell?: TOnCell<TRecord>;
 };
@@ -44,7 +45,7 @@ export const columnsWithOnCell = <TRecord, TProps extends TOptions<TRecord> = TO
   return columns =>
     columns.map(col => {
       if (!col.editable) return col;
-      const {fieldType = 'select', dataIndex, title} = col;
+      const {fieldType = EFieldTypesSupported.string, dataIndex, title} = col;
       return {
         ...col,
         onCell: (record: TRecord) => ({
