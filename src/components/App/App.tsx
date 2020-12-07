@@ -1,6 +1,6 @@
 import React, {FC, useCallback, useMemo, useState} from 'react';
 import {withTable} from '../Table';
-import {uniq} from '../Table/HOC/helpers';
+import {TOnAddRow, TOnDelete, TOnSave, TOnSearch, TOnSort, uniq} from '../Table/HOC/helpers';
 import {EFieldTypesSupported} from '../Table/HOC/constants';
 import {TColumns} from '../Table/HOC/withEditableCells/helpers';
 
@@ -31,7 +31,7 @@ const data = [
   },
 ];
 
-type TRecord = typeof data[0];
+type TRecord = Partial<typeof data[0]>;
 
 const columns: TColumns<TRecord> = [
   {
@@ -71,6 +71,8 @@ const Table = withTable<TRecord>({
 
 const App: FC = () => {
   const [list, setList] = useState<TRecord[]>(data);
+  // initValues for editable cells
+  const [initialValues] = useState<Partial<TRecord>>({title: '', address: '', age: undefined, sex: undefined});
   // dictionary for select
   const dictionary = useMemo(() => {
     return {
@@ -81,28 +83,21 @@ const App: FC = () => {
     };
   }, []);
 
-  const handleAddRow = useCallback(records => setList(records), [setList]);
-  const handleDeleteRow = useCallback((_record, records) => setList(records), [setList]);
-  const handleSaveRowData = useCallback(
-    (record: TRecord, records: TRecord[]) => {
+  const handleAddRow = useCallback<TOnAddRow<TRecord>>(records => setList(records), [setList]);
+  const handleDeleteRow = useCallback<TOnDelete<TRecord>>((_record, records) => setList(records), [setList]);
+  const handleDraggableSort = useCallback<TOnSort<TRecord>>((_target, _before, records) => setList(records), [setList]);
+  const handleSearch = useCallback<TOnSearch<TRecord>>((records, value) => (value ? setList(records) : setList(data)), [
+    setList,
+  ]);
+
+  const handleSaveRowData = useCallback<TOnSave<TRecord>>(
+    (record, records) => {
       if (record?.id) return setList(records);
       const newList = records.map(item => {
         // mock request, data should be received with id
         return item?.id ? item : {...item, id: uniq()};
       });
       return setList(newList);
-    },
-    [setList],
-  );
-
-  const handleDraggableSort = useCallback(
-    (_target: TRecord | null, _before: TRecord | null, records: TRecord[]) => setList(records),
-    [setList],
-  );
-
-  const handleSearch = useCallback(
-    (records: TRecord[], value: string) => {
-      return value ? setList(records) : setList(data);
     },
     [setList],
   );
@@ -114,7 +109,7 @@ const App: FC = () => {
       dataSource={list}
       dictionary={dictionary}
       columns={columns}
-      initialValues={{title: '', address: '', age: 0}}
+      initialValues={initialValues}
       onAddRow={handleAddRow}
       onDelete={handleDeleteRow}
       onSave={handleSaveRowData}
