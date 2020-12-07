@@ -14,7 +14,7 @@ module.exports = {
   '@btn-font-weight': ' 600',
   '@btn-font-size-lg': '14px',
   '@btn-height-lg': ' 38px',
-  '@btn-line-height': '1.9',
+  '@btn-line-height': '1',
 
   // card
   '@card-padding-base': '20px',
