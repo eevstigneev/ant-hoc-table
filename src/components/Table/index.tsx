@@ -29,9 +29,13 @@ const Table: FC = <TRecord extends Record<string, unknown>>(
   const mergedComponents = useMemo(() => mergeTableParts(styledComponents, components), [components]);
   return (
     <TableBox>
-      <AntTable<TRecord> rowKey="index" components={mergedComponents} {...restProps} />
+      <AntTable<TRecord> components={mergedComponents} {...restProps} />
     </TableBox>
   );
+};
+
+Table.defaultProps = {
+  rowKey: 'index',
 };
 
 type TOptions = {
