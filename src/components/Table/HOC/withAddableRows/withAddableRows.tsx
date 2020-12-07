@@ -13,8 +13,8 @@ function withAddableRows<TRecord>(TableComponent: FC<TWithTable<TRecord>>): FC<T
     }
 
     const handleAddRow = useCallback(() => {
-      const firstElement = dataSource.length ? dataSource[0] : null;
-      const alreadyHasNewRow = firstElement && !(firstElement as MaybeIdOrIndex)?.id;
+      const firstElement = (dataSource.length ? dataSource[0] : null) as MaybeIdOrIndex | null;
+      const alreadyHasNewRow = firstElement && !firstElement?.id;
       if (alreadyHasNewRow) return;
       const newData = [{...initialValues, index: uniq()}, ...dataSource];
       if (onAddRow) onAddRow(newData);
