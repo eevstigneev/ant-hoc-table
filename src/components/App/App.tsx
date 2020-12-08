@@ -1,8 +1,6 @@
 import React, {FC, useCallback, useMemo, useState} from 'react';
-import {withTable} from '../Table';
-import {TOnAddRow, TOnDelete, TOnSave, TOnSearch, TOnSort, uniq} from '../Table/HOC/helpers';
-import {EFieldTypesSupported} from '../Table/HOC/constants';
-import {TColumns} from '../Table/HOC/withEditableCells/helpers';
+import {withTable, EFieldTypesSupported, uniq} from '../Table';
+import type {TColumns, TOnAddRow, TOnDeleteRow, TOnSaveRowData, TOnSearchInTitle, TOnDraggableSort} from '../Table';
 
 const data = [
   {
@@ -84,13 +82,16 @@ const App: FC = () => {
   }, []);
 
   const handleAddRow = useCallback<TOnAddRow<TRecord>>(records => setList(records), [setList]);
-  const handleDeleteRow = useCallback<TOnDelete<TRecord>>((_record, records) => setList(records), [setList]);
-  const handleDraggableSort = useCallback<TOnSort<TRecord>>((_target, _before, records) => setList(records), [setList]);
-  const handleSearch = useCallback<TOnSearch<TRecord>>((records, value) => (value ? setList(records) : setList(data)), [
+  const handleDeleteRow = useCallback<TOnDeleteRow<TRecord>>((_record, records) => setList(records), [setList]);
+  const handleDraggableSort = useCallback<TOnDraggableSort<TRecord>>((_target, _before, records) => setList(records), [
     setList,
   ]);
+  const handleSearch = useCallback<TOnSearchInTitle<TRecord>>(
+    (records, value) => (value ? setList(records) : setList(data)),
+    [setList],
+  );
 
-  const handleSaveRowData = useCallback<TOnSave<TRecord>>(
+  const handleSaveRowData = useCallback<TOnSaveRowData<TRecord>>(
     (record, records) => {
       if (record?.id) return setList(records);
       const newList = records.map(item => {
@@ -104,17 +105,17 @@ const App: FC = () => {
 
   return (
     <Table
-      title={() => 'HOC table'}
+      title={() => 'Users'}
       rowKey="index"
       dataSource={list}
       dictionary={dictionary}
       columns={columns}
       initialValues={initialValues}
       onAddRow={handleAddRow}
-      onDelete={handleDeleteRow}
-      onSave={handleSaveRowData}
-      onSort={handleDraggableSort}
-      onSearch={handleSearch}
+      onDeleteRow={handleDeleteRow}
+      onSaveRowData={handleSaveRowData}
+      onDraggableSort={handleDraggableSort}
+      onSearchInTitle={handleSearch}
     />
   );
 };

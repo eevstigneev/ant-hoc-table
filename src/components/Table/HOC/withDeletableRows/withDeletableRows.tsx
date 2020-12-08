@@ -13,7 +13,7 @@ function withDeletableRows<TRecord extends Record<string, unknown>>(
 ): FC<TWithTable<TRecord>> {
   function TableDeletable(props: TWithTable<TRecord>) {
     const {dataSource = []} = props;
-    const {onDelete, columns = [], ...restProps} = props;
+    const {onDeleteRow, columns = [], ...restProps} = props;
 
     const handleDeleteRow = useCallback(
       (record: TRecord) => {
@@ -26,9 +26,9 @@ function withDeletableRows<TRecord extends Record<string, unknown>>(
         });
         if (index === -1) return;
         newData.splice(index, 1);
-        if (onDelete) onDelete(removedRow, newData);
+        if (onDeleteRow) onDeleteRow(removedRow, newData);
       },
-      [dataSource, onDelete],
+      [dataSource, onDeleteRow],
     );
 
     const mergedColumns = useMemo(() => {

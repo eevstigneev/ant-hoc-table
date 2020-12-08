@@ -1,7 +1,7 @@
 import React, {ReactElement, useMemo} from 'react';
 import {Form, Input, InputNumber, Select} from 'antd';
 import styled from '@emotion/styled';
-import {TCell} from '../../TableParts';
+import {TableCell} from '../../TableParts';
 import {TCellAllProps, TFieldProps} from './helpers';
 import {EFieldTypesSupported} from '../constants';
 
@@ -71,7 +71,9 @@ const CellEditable = <TRecord extends Record<string, unknown>>(
   const {editing, dataIndex, title, enums, fieldType, record, index, children, ...restProps} = props;
   const fieldProps = {title, dataIndex, enums, fieldType, record};
   return (
-    <TCell<TCellAllProps<TRecord>> {...restProps}>{editing ? <Field<TRecord> {...fieldProps} /> : children}</TCell>
+    <TableCell<TCellAllProps<TRecord>> {...restProps}>
+      {editing ? <Field<TRecord> {...fieldProps} /> : children}
+    </TableCell>
   );
 };
 

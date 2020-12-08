@@ -4,10 +4,10 @@ import {EditOutlined} from '@ant-design/icons/lib';
 import {getDisplayName, TWithTable} from '../helpers';
 
 export function withLinkToDetail<TRecord>(TableComponent: FC<TWithTable<TRecord>>): FC<TWithTable<TRecord>> {
-  function TableWithLinkToEdit(props: TWithTable<TRecord>) {
-    const {columns = [], onLink, ...restProps} = props;
+  function TableWithLinkToDetail(props: TWithTable<TRecord>) {
+    const {columns = [], onLinkToDetail, ...restProps} = props;
     const mergedColumns = useMemo(() => {
-      if (!onLink) {
+      if (!onLinkToDetail) {
         return columns;
       }
 
@@ -16,16 +16,18 @@ export function withLinkToDetail<TRecord>(TableComponent: FC<TWithTable<TRecord>
         {
           key: 'onLink',
           width: '40px',
-          render: (record: TRecord) => <Button type="link" icon={<EditOutlined />} onClick={() => onLink(record)} />,
+          render: (record: TRecord) => (
+            <Button type="link" icon={<EditOutlined />} onClick={() => onLinkToDetail(record)} />
+          ),
         },
       ];
-    }, [columns, onLink]);
+    }, [columns, onLinkToDetail]);
 
     return <TableComponent {...restProps} columns={mergedColumns} />;
   }
 
-  TableWithLinkToEdit.displayName = `withLinkToDetail(${getDisplayName(TableComponent)})`;
+  TableWithLinkToDetail.displayName = `withLinkToDetail(${getDisplayName(TableComponent)})`;
 
-  return TableWithLinkToEdit;
+  return TableWithLinkToDetail;
 }
 export default withLinkToDetail;

@@ -3,7 +3,7 @@ import {SortableContainer, SortableElement, SortableHandle, SortEndHandler} from
 import {MenuOutlined} from '@ant-design/icons/lib';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {CustomizeComponent, TableComponents} from 'rc-table/lib/interface';
-import {TBody, TRow, TRowProps, TBodyProps} from '../../TableParts';
+import {TableBody, TableRow, TRowProps, TBodyProps} from '../../TableParts';
 
 export const DragHandle = SortableHandle(() => <MenuOutlined />);
 
@@ -53,7 +53,7 @@ export const mergeTableParts = <TRecord extends Record<string, unknown>>(
     throw Error(`The CustomizeScrollBody is not supported for sortable rows`);
   }
 
-  const {wrapper = TBody, row = TRow, ...restBody} = body || {};
+  const {wrapper = TableBody, row = TableRow, ...restBody} = body || {};
   const newBody = {
     wrapper: makeSortable<TBodyProps>('tbody', wrapper, {onSortEnd}),
     row: makeSortable<TRowProps>('row', row, {dataSource}),

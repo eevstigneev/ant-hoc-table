@@ -5,20 +5,20 @@ import {TableComponents} from 'rc-table/lib/interface';
 import {TDictionary} from './withEditableCells/helpers';
 
 export type TOnReSyncKey<TRecord> = (record: TRecord) => void;
-export type TOnSort<TRecord> = (record: TRecord, insertBefore: TRecord | null, list: TRecord[]) => void;
-export type TOnSearch<TRecord> = (records: TRecord[], value: string) => void;
-export type TOnLink<TRecord> = (record: TRecord) => void;
-export type TOnDelete<TRecord> = (record: TRecord, list: TRecord[]) => void;
-export type TOnSave<TRecord> = (rowFormData: Partial<TRecord>, list: TRecord[]) => void;
+export type TOnDraggableSort<TRecord> = (record: TRecord, insertBefore: TRecord | null, list: TRecord[]) => void;
+export type TOnSearchInTitle<TRecord> = (records: TRecord[], value: string) => void;
+export type TOnLinkToDetail<TRecord> = (record: TRecord) => void;
+export type TOnDeleteRow<TRecord> = (record: TRecord, list: TRecord[]) => void;
+export type TOnSaveRowData<TRecord> = (rowFormData: Partial<TRecord>, list: TRecord[]) => void;
 export type TOnAddRow<TRecord> = (list: Partial<TRecord>[]) => void;
 
 export type TWithTable<TRecord> = {
   onReSyncKey?: TOnReSyncKey<TRecord>;
-  onSort?: TOnSort<TRecord>;
-  onSearch?: TOnSearch<TRecord>;
-  onLink?: TOnLink<TRecord>;
-  onDelete?: TOnDelete<TRecord>;
-  onSave?: TOnSave<TRecord>;
+  onDraggableSort?: TOnDraggableSort<TRecord>;
+  onSearchInTitle?: TOnSearchInTitle<TRecord>;
+  onLinkToDetail?: TOnLinkToDetail<TRecord>;
+  onDeleteRow?: TOnDeleteRow<TRecord>;
+  onSaveRowData?: TOnSaveRowData<TRecord>;
   onAddRow?: TOnAddRow<TRecord>;
   initialValues?: Partial<TRecord>;
   dictionary?: TDictionary<TRecord>;

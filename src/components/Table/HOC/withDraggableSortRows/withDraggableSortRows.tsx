@@ -23,7 +23,7 @@ function withDraggableSortRows<TRecord extends Record<string, unknown>>(
 ): FC<TWithTable<TRecord>> {
   function TableSortable(props: TWithTable<TRecord>) {
     const {dataSource = []} = props;
-    const {onSort, columns = [], components = {}, ...restProps} = props;
+    const {onDraggableSort, columns = [], components = {}, ...restProps} = props;
     const handleSortEnd = useCallback<SortEndHandler>(
       sort => {
         const {oldIndex, newIndex} = sort;
@@ -31,9 +31,9 @@ function withDraggableSortRows<TRecord extends Record<string, unknown>>(
         const record = currentItem<TRecord>(dataSource, oldIndex);
         const newList = sortItems<TRecord>(dataSource, sort);
         const insertBefore = nextElement(newList, newIndex);
-        if (onSort && record) onSort(record, insertBefore, newList);
+        if (onDraggableSort && record) onDraggableSort(record, insertBefore, newList);
       },
-      [dataSource, onSort],
+      [dataSource, onDraggableSort],
     );
 
     const tableParts = useMemo(

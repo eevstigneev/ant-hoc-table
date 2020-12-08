@@ -28,7 +28,7 @@ function withEditableCells<TRecord extends Record<string, unknown>>(
 ): FC<TWithTable<TRecord>> {
   function TableEditable(props: TWithTable<TRecord>) {
     const {dataSource = []} = props;
-    const {onSave, dictionary, columns = [], components, ...restProps} = props;
+    const {onSaveRowData, dictionary, columns = [], components, ...restProps} = props;
 
     const [form] = Form.useForm();
     const [editingKey, setEditingKey] = useState<string | number>('');
@@ -69,9 +69,9 @@ function withEditableCells<TRecord extends Record<string, unknown>>(
         if (!item) return;
         newData.splice(idx, 1, {...item, ...id2ValAtDictionary(formData)});
         const {index, ...restRecord} = item;
-        if (onSave) onSave({...restRecord, ...formData}, newData);
+        if (onSaveRowData) onSaveRowData({...restRecord, ...formData}, newData);
       },
-      [dataSource, form, id2ValAtDictionary, onSave],
+      [dataSource, form, id2ValAtDictionary, onSaveRowData],
     );
 
     const mergedColumns = useMemo(() => {

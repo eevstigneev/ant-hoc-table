@@ -7,16 +7,16 @@ import {PlusOutlined} from '@ant-design/icons/lib';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {PanelRender} from 'rc-table/lib/interface';
 
-const TSearchBox = styled.div`
+const TableSearchWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
 `;
 
-const TSearchInput = styled(Input.Search)`
+const TableSearchField = styled(Input.Search)`
   width: 370px;
 `;
 
-const TCaption = styled.div`
+const TableSearchLabel = styled.div`
   font-size: 18px;
   color: #3d3d3d;
   align-self: center;
@@ -24,7 +24,14 @@ const TCaption = styled.div`
   min-height: 32px;
 `;
 
-const Th = styled.th`
+export const TableWrapper = styled.section`
+  margin: 30px 0;
+  background-color: #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 12px 18px 0 rgba(0, 0, 0, 0.15);
+`;
+
+const TableHead = styled.th`
   font-size: 12px;
   padding-top: 11px !important;
   padding-bottom: 8px !important;
@@ -38,7 +45,7 @@ const Th = styled.th`
   }
 `;
 
-const Td = styled.td`
+const TableData = styled.td`
   font-size: 12px;
   vertical-align: middle;
   &[rowspan] {
@@ -54,22 +61,22 @@ export type TBodyProps = HTMLProps<HTMLTableSectionElement>;
 export type TCellProps = HTMLProps<HTMLTableCellElement>;
 export type THeaderCellProps = HTMLProps<HTMLTableHeaderCellElement>;
 
-export const TRow: FC<TRowProps> = props => <tr {...props} />;
-export const TBody: FC<TBodyProps> = props => <tbody {...props} />;
-export const TCell = <P,>(props: P & TCellProps): ReactElement => {
+export const TableRow: FC<TRowProps> = props => <tr {...props} />;
+export const TableBody: FC<TBodyProps> = props => <tbody {...props} />;
+export const TableCell = <P,>(props: P & TCellProps): ReactElement => {
   const {children, colSpan, rowSpan, width, className, id, style} = props;
   const restProps = {colSpan, rowSpan, width, className, id, style};
-  return <Td {...restProps}>{children}</Td>;
+  return <TableData {...restProps}>{children}</TableData>;
 };
 
-export const THeaderCell: FC<THeaderCellProps> = ({as, ...restProps}) => <Th {...restProps} />;
-export const TSearch: FC<SearchProps> = props => {
+export const TableHeadCell: FC<THeaderCellProps> = ({as, ...restProps}) => <TableHead {...restProps} />;
+export const TableSearch: FC<SearchProps> = props => {
   const {children, ...restProps} = props;
   return (
-    <TSearchBox>
-      <TCaption>{children}</TCaption>
-      <TSearchInput {...restProps} />
-    </TSearchBox>
+    <TableSearchWrapper>
+      <TableSearchLabel>{children}</TableSearchLabel>
+      <TableSearchField {...restProps} />
+    </TableSearchWrapper>
   );
 };
 
@@ -81,6 +88,7 @@ export const TAddRow: FC<ButtonProps> = ({children, ...restProps}) => {
     </>
   );
 };
+
 TAddRow.defaultProps = {
   type: 'link',
   title: 'Добавить строку',
