@@ -1,11 +1,15 @@
 import React, {FC, useCallback, useMemo, useState} from 'react';
 import {Button, Form, Popconfirm} from 'antd';
 import {CloseSquareOutlined, EditOutlined, QuestionCircleOutlined, SaveOutlined} from '@ant-design/icons/lib';
+import styled from '@emotion/styled';
 import {getDisplayName, TWithTable, mergeTableParts} from '../helpers';
 import {columnsWithOnCell, TDictionary, TDictionaryItem} from './helpers';
 import CellEditable from './CellEditable';
 
 const editableComponents = {body: {cell: CellEditable}};
+const QuestionCircleOutlinedStyled = styled(QuestionCircleOutlined)`
+  color: red;
+`;
 
 // replace id to title from dictionary if exist
 const ids2Values = <TRecord extends Record<string, unknown>, D extends TDictionary<TRecord>>(dictionary: D) => (
@@ -40,7 +44,14 @@ function withEditableCells<TRecord extends Record<string, unknown>>(
       [inDictionary],
     );
 
-    const isEditing = useCallback(record => record?.index === editingKey, [editingKey]);
+    const isEditing = useCallback(
+      record => {
+        const {id, index} = record;
+        const isNewRow = !id && (!!index || index === 0); // not empty, string or number
+        return (!editingKey && isNewRow) || index === editingKey;
+      },
+      [editingKey],
+    );
     const mergeColumns = useMemo(
       () => columnsWithOnCell<TRecord>({dictionary, isEditing}),
       [dictionary, isEditing],
@@ -89,7 +100,7 @@ function withEditableCells<TRecord extends Record<string, unknown>>(
                   title="Вы уверены"
                   okText="Да"
                   cancelText="Нет"
-                  icon={<QuestionCircleOutlined style={{color: 'red'}} />}
+                  icon={<QuestionCircleOutlinedStyled />}
                   onConfirm={() => handleSave(record)}
                   onCancel={() => setEditState()}
                 >

@@ -28,5 +28,5 @@ export function withTable<TRecord extends Record<string, unknown>>(options: TOpt
   if (options.withLinkToDetail) enhances.push(TableHOCS.withLinkToDetail);
   if (options.withEditableCells) enhances.push(TableHOCS.withEditableCells);
 
-  return React.memo(enhances.reduce((Wrapped, Wrapper) => Wrapper(Wrapped), Table));
+  return React.memo(enhances.reduce((Wrapped, Wrapper) => React.memo(Wrapper(Wrapped)), Table));
 }
