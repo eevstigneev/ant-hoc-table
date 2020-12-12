@@ -80,7 +80,7 @@ export const TableSearch: FC<SearchProps> = props => {
   );
 };
 
-export const TAddRow: FC<ButtonProps> = ({children, ...restProps}) => {
+export const TableAddRowButton: FC<ButtonProps> = ({children, ...restProps}) => {
   return (
     <>
       {children}
@@ -89,7 +89,7 @@ export const TAddRow: FC<ButtonProps> = ({children, ...restProps}) => {
   );
 };
 
-TAddRow.defaultProps = {
+TableAddRowButton.defaultProps = {
   type: 'link',
   title: 'Добавить строку',
 };

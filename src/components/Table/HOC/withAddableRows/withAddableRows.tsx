@@ -1,7 +1,7 @@
 import React, {FC, useCallback, useMemo} from 'react';
 import {ButtonProps} from 'antd/lib/button';
 import {getDisplayName, TWithTable, uniq} from '../helpers';
-import {TAddRow, TitleWith} from '../../TableParts';
+import {TableAddRowButton, TitleWith} from '../../TableParts';
 
 function withAddableRows<TRecord extends Record<string, unknown>>(
   TableComponent: FC<TWithTable<TRecord>>,
@@ -23,7 +23,7 @@ function withAddableRows<TRecord extends Record<string, unknown>>(
     }, [dataSource, onAddRow, initialValues]);
 
     const Title = useMemo(
-      () => TitleWith<TRecord, ButtonProps>(title, TAddRow, {onClick: handleAddRow}),
+      () => TitleWith<TRecord, ButtonProps>(title, TableAddRowButton, {onClick: handleAddRow}),
       [title, handleAddRow],
     );
 
